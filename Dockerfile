@@ -4,7 +4,7 @@ LABEL app="bank-marketing-predict"
 
 WORKDIR /app
 
-# Install system deps for healthcheck
+# Install system deps for healthcheck and entrypoint
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -16,16 +16,15 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --timeout 120 -i "${PIP_INDEX_URL}" -r requirements.txt
 
 # Copy application code
+COPY docker-entrypoint.sh .
 COPY src/ ./src/
 COPY models/ ./models/
 
-EXPOSE 8501
+RUN chmod +x docker-entrypoint.sh
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-    CMD curl -fsS http://localhost:8501/_stcore/health || exit 1
+EXPOSE 8501 8502
 
-ENTRYPOINT ["streamlit", "run", "src/app.py", \
-    "--server.port=8501", \
-    "--server.address=0.0.0.0", \
-    "--server.headless=true", \
-    "--browser.gatherUsageStats=false"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD curl -fsS http://localhost:8502/healthz || exit 1
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
