@@ -4,7 +4,11 @@ US-4: Provides an input form covering all 20 model features, loads the
 trained pipeline, and returns a real-time prediction with probability.
 """
 
+import sys
 from pathlib import Path
+
+# Ensure project root is on sys.path for Streamlit page execution
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 import streamlit as st
 
@@ -69,9 +73,82 @@ CATEGORICAL_OPTIONS = {
     "housing": ["yes", "no", "unknown"],
     "loan": ["no", "yes", "unknown"],
     "contact": ["cellular", "telephone"],
-    "month": ["may", "jun", "jul", "aug", "oct", "nov", "dec", "mar", "apr", "sep"],
+    "month": [
+        "jan",
+        "feb",
+        "mar",
+        "apr",
+        "may",
+        "jun",
+        "jul",
+        "aug",
+        "sep",
+        "oct",
+        "nov",
+        "dec",
+    ],
     "day_of_week": ["mon", "tue", "wed", "thu", "fri"],
     "poutcome": ["nonexistent", "failure", "success"],
+}
+
+# Chinese labels for categorical values (value -> Chinese display)
+CATEGORICAL_VALUE_LABELS = {
+    "job": {
+        "admin.": "行政",
+        "blue-collar": "蓝领",
+        "technician": "技术员",
+        "services": "服务业",
+        "management": "管理岗",
+        "retired": "退休",
+        "entrepreneur": "企业家",
+        "self-employed": "自雇",
+        "housemaid": "家政",
+        "unemployed": "失业",
+        "student": "学生",
+        "unknown": "未知",
+    },
+    "marital": {
+        "married": "已婚",
+        "single": "单身",
+        "divorced": "离异",
+        "unknown": "未知",
+    },
+    "education": {
+        "university.degree": "本科",
+        "high.school": "高中",
+        "basic.9y": "初中",
+        "professional.course": "专科",
+        "unknown": "未知",
+        "basic.4y": "小学4年",
+        "basic.6y": "小学6年",
+        "illiterate": "文盲",
+    },
+    "default": {"no": "否", "unknown": "未知", "yes": "是"},
+    "housing": {"yes": "是", "no": "否", "unknown": "未知"},
+    "loan": {"no": "否", "yes": "是", "unknown": "未知"},
+    "contact": {"cellular": "手机", "telephone": "座机"},
+    "month": {
+        "jan": "1月",
+        "feb": "2月",
+        "mar": "3月",
+        "apr": "4月",
+        "may": "5月",
+        "jun": "6月",
+        "jul": "7月",
+        "aug": "8月",
+        "sep": "9月",
+        "oct": "10月",
+        "nov": "11月",
+        "dec": "12月",
+    },
+    "day_of_week": {
+        "mon": "周一",
+        "tue": "周二",
+        "wed": "周三",
+        "thu": "周四",
+        "fri": "周五",
+    },
+    "poutcome": {"nonexistent": "无记录", "failure": "失败", "success": "成功"},
 }
 
 CATEGORICAL_DEFAULTS = {
@@ -110,6 +187,27 @@ FEATURE_LABELS = {
     "lending_rate3m": "3个月贷款利率",
     "nr_employed": "就业人数",
 }
+
+
+def _cat_options(feature: str) -> dict:
+    """Return {chinese_label: english_value} for a categorical feature."""
+    labels = CATEGORICAL_VALUE_LABELS[feature]
+    return {labels[v]: v for v in CATEGORICAL_OPTIONS[feature]}
+
+
+def _selectbox_cat(feature: str, key: str | None = None) -> str:
+    """Render a categorical selectbox with Chinese labels, return English value."""
+    options = _cat_options(feature)
+    default_en = CATEGORICAL_DEFAULTS[feature]
+    default_cn = CATEGORICAL_VALUE_LABELS[feature][default_en]
+    cn_labels = list(options.keys())
+    selected_cn = st.selectbox(
+        FEATURE_LABELS[feature],
+        cn_labels,
+        index=cn_labels.index(default_cn),
+        key=key,
+    )
+    return options[selected_cn]
 
 
 # ---------------------------------------------------------------------------
@@ -160,77 +258,29 @@ def main() -> None:
                 step=NUMERIC_RANGES["age"][2],
             )
         with col2:
-            features["job"] = st.selectbox(
-                FEATURE_LABELS["job"],
-                CATEGORICAL_OPTIONS["job"],
-                index=CATEGORICAL_OPTIONS["job"].index(CATEGORICAL_DEFAULTS["job"]),
-            )
+            features["job"] = _selectbox_cat("job", key="pred_job")
         with col3:
-            features["marital"] = st.selectbox(
-                FEATURE_LABELS["marital"],
-                CATEGORICAL_OPTIONS["marital"],
-                index=CATEGORICAL_OPTIONS["marital"].index(
-                    CATEGORICAL_DEFAULTS["marital"]
-                ),
-            )
+            features["marital"] = _selectbox_cat("marital", key="pred_marital")
 
         col1, col2, col3 = st.columns(3)
         with col1:
-            features["education"] = st.selectbox(
-                FEATURE_LABELS["education"],
-                CATEGORICAL_OPTIONS["education"],
-                index=CATEGORICAL_OPTIONS["education"].index(
-                    CATEGORICAL_DEFAULTS["education"]
-                ),
-            )
+            features["education"] = _selectbox_cat("education", key="pred_edu")
         with col2:
-            features["default"] = st.selectbox(
-                FEATURE_LABELS["default"],
-                CATEGORICAL_OPTIONS["default"],
-                index=CATEGORICAL_OPTIONS["default"].index(
-                    CATEGORICAL_DEFAULTS["default"]
-                ),
-            )
+            features["default"] = _selectbox_cat("default", key="pred_default")
         with col3:
-            features["housing"] = st.selectbox(
-                FEATURE_LABELS["housing"],
-                CATEGORICAL_OPTIONS["housing"],
-                index=CATEGORICAL_OPTIONS["housing"].index(
-                    CATEGORICAL_DEFAULTS["housing"]
-                ),
-            )
+            features["housing"] = _selectbox_cat("housing", key="pred_housing")
 
         # ---- Contact Info ----
         st.markdown("#### 📞 联系信息")
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            features["contact"] = st.selectbox(
-                FEATURE_LABELS["contact"],
-                CATEGORICAL_OPTIONS["contact"],
-                index=CATEGORICAL_OPTIONS["contact"].index(
-                    CATEGORICAL_DEFAULTS["contact"]
-                ),
-            )
+            features["contact"] = _selectbox_cat("contact", key="pred_contact")
         with col2:
-            features["month"] = st.selectbox(
-                FEATURE_LABELS["month"],
-                CATEGORICAL_OPTIONS["month"],
-                index=CATEGORICAL_OPTIONS["month"].index(CATEGORICAL_DEFAULTS["month"]),
-            )
+            features["month"] = _selectbox_cat("month", key="pred_month")
         with col3:
-            features["day_of_week"] = st.selectbox(
-                FEATURE_LABELS["day_of_week"],
-                CATEGORICAL_OPTIONS["day_of_week"],
-                index=CATEGORICAL_OPTIONS["day_of_week"].index(
-                    CATEGORICAL_DEFAULTS["day_of_week"]
-                ),
-            )
+            features["day_of_week"] = _selectbox_cat("day_of_week", key="pred_dow")
         with col4:
-            features["loan"] = st.selectbox(
-                FEATURE_LABELS["loan"],
-                CATEGORICAL_OPTIONS["loan"],
-                index=CATEGORICAL_OPTIONS["loan"].index(CATEGORICAL_DEFAULTS["loan"]),
-            )
+            features["loan"] = _selectbox_cat("loan", key="pred_loan")
 
         # ---- Campaign Info ----
         st.markdown("#### 📊 营销信息")
@@ -270,13 +320,7 @@ def main() -> None:
                 step=NUMERIC_RANGES["previous"][2],
             )
         with col2:
-            features["poutcome"] = st.selectbox(
-                FEATURE_LABELS["poutcome"],
-                CATEGORICAL_OPTIONS["poutcome"],
-                index=CATEGORICAL_OPTIONS["poutcome"].index(
-                    CATEGORICAL_DEFAULTS["poutcome"]
-                ),
-            )
+            features["poutcome"] = _selectbox_cat("poutcome", key="pred_pout")
 
         # ---- Economic Indicators ----
         st.markdown("#### 💰 经济指标")
