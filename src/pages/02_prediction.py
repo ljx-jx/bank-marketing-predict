@@ -340,7 +340,16 @@ def main() -> None:
 # Helpers
 # ---------------------------------------------------------------------------
 def _resolve_model_path() -> str:
-    """Find the trained model file."""
+    """Find the trained model file.
+
+    Checks BANK_MODEL_PATH env var first (for CI/testing).
+    """
+    import os
+
+    env_path = os.environ.get("BANK_MODEL_PATH")
+    if env_path:
+        return env_path
+
     candidates = [
         Path(__file__).parent.parent.parent / "models" / "model_pipeline.pkl",
         Path("models") / "model_pipeline.pkl",

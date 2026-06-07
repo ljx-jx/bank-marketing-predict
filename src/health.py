@@ -5,9 +5,10 @@ Runs alongside the Streamlit main process in the container.
 """
 
 import json
+import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-HEALTH_PORT = 8502
+HEALTH_PORT = int(os.environ.get("HEALTH_PORT", "8502"))
 
 
 class HealthHandler(BaseHTTPRequestHandler):

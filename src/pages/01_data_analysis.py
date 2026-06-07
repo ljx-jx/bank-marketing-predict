@@ -30,7 +30,16 @@ def _load_data(data_path: str) -> pd.DataFrame:
 
 
 def _get_data_path() -> str:
-    """Resolve the train.csv path relative to the project root."""
+    """Resolve the train.csv path relative to the project root.
+
+    Checks BANK_TRAIN_PATH env var first (for CI/testing).
+    """
+    import os
+
+    env_path = os.environ.get("BANK_TRAIN_PATH")
+    if env_path:
+        return env_path
+
     candidates = [
         Path(__file__).parent.parent.parent / "data" / "train.csv",
         Path("data") / "train.csv",

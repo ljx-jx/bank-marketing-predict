@@ -87,10 +87,10 @@ class TestDataAnalysisPage:
 
     @pytest.fixture(autouse=True)
     def _setup(self, monkeypatch, tmp_path):
-        """Create temp data and redirect _get_data_path."""
+        """Create temp data and set BANK_TRAIN_PATH env var."""
         self.csv_path = _make_sample_csv(str(tmp_path))
+        monkeypatch.setenv("BANK_TRAIN_PATH", self.csv_path)
         self.page_mod = importlib.import_module(PAGE_MODULE)
-        monkeypatch.setattr(self.page_mod, "_get_data_path", lambda: self.csv_path)
         self.page_mod._load_data.clear()
 
     def test_page_renders_without_error(self):

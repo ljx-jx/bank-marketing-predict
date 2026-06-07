@@ -61,13 +61,10 @@ def _make_model_dir(tmp_path, monkeypatch):
     model_dir = tmp_path / "models"
     train_model(str(csv_path), str(model_dir))
 
-    # Patch the page module to use our temp model
+    # Set env var for page to find the model
+    monkeypatch.setenv("BANK_MODEL_PATH", str(model_dir / "model_pipeline.pkl"))
+
     page_mod = importlib.import_module(PAGE_MODULE)
-    monkeypatch.setattr(
-        page_mod,
-        "_resolve_model_path",
-        lambda: str(model_dir / "model_pipeline.pkl"),
-    )
     page_mod._load_model_cached.clear()
 
     return page_mod
