@@ -109,9 +109,7 @@ class TestEvaluate:
         from sklearn.pipeline import Pipeline as SkPipeline
         from sklearn.preprocessing import StandardScaler
 
-        X_val = pd.DataFrame(
-            {"a": [1.0, 3.0, 5.0, 7.0], "b": [2.0, 4.0, 6.0, 8.0]}
-        )
+        X_val = pd.DataFrame({"a": [1.0, 3.0, 5.0, 7.0], "b": [2.0, 4.0, 6.0, 8.0]})
         y_val = pd.Series([0, 1, 1, 0])
 
         pipe = SkPipeline(
@@ -132,9 +130,7 @@ class TestEvaluate:
         from sklearn.pipeline import Pipeline as SkPipeline
         from sklearn.preprocessing import StandardScaler
 
-        X_val = pd.DataFrame(
-            np.random.randn(20, 2), columns=["a", "b"]
-        )
+        X_val = pd.DataFrame(np.random.randn(20, 2), columns=["a", "b"])
         y_val = pd.Series(np.random.randint(0, 2, 20))
 
         pipe = SkPipeline(
