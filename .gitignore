@@ -1,6 +1,7 @@
 # Data & model artifacts (large files, not version controlled)
 data/
-models/
+models/*
+!models/.gitkeep
 
 # Python
 __pycache__/

@@ -8,28 +8,28 @@
 
 ## 当前状态 (最后更新: 2026-06-07 · by AI)
 
-- **阶段**：`初始化`（对应六步流程第 ① 步：建仓前准备）
-- **上一步完成**：已填写 `00-project-context.md`、`01-requirements.md`，初始化本文件。
-- **下一步 (TODO 第一条)**：等待用户确认文档内容；确认后进入六步流程第 ① 步 — 建仓。
+- **阶段**：`开发中`（对应六步流程第 ③ 步：本地模块化开发）
+- **上一步完成**：全部 6 个模块开发完成（58 tests, 86% 覆盖率, ruff 全绿）
+- **下一步 (TODO 第一条)**：第④步 — 本地 CI 全门禁自检
+- **阻塞项**：无
 - **阻塞项**：无
 
 ---
 
 ## 待办清单 (TODO，按优先级)
 
-- [ ] **确认阶段**：用户审阅并确认 `00-project-context.md`、`01-requirements.md`、`PROGRESS.md`
-- [ ] **第①步**：用 `gh` 创建 GitHub 仓库；初始化 `.gitignore` + 占位 `README.md`
-- [ ] **第①步**：提示用户配置 GitHub Secrets（本项目仅 CI 无 CD，可跳过 SSH Secrets，仅确认仓库可用）
-- [ ] **第②步**：从 `main` 开出 `feature/1-project-init` 分支
-- [ ] **第③步-模块1**：搭建项目骨架（`src/`、`tests/`、`requirements.txt`、`requirements-dev.txt`、`Dockerfile`、`.github/workflows/ci.yml`）
-- [ ] **第③步-模块2**：实现数据加载与预处理模块（`src/utils/data_loader.py`、`src/utils/preprocessing.py`）+ 单元测试
-- [ ] **第③步-模块3**：实现数据分析页面（US-2）+ 集成测试
-- [ ] **第③步-模块4**：实现模型离线训练模块（`src/model/train.py`）+ 单元测试，验证 AUC >= 0.70
-- [ ] **第③步-模块5**：实现在线预测页面（US-4）+ 单元测试
-- [ ] **第③步-模块6**：实现应用入口与健康检查（US-5）+ 测试
-- [ ] **第④步**：本地 CI 自检 — `ruff format --check .`、`ruff check .`、`pytest --cov --cov-fail-under=80`
-- [ ] **第⑤步**：推送 feature 分支，`gh pr create` 发起 PR，等待 CI 全绿
-- [ ] **第⑥步**：人工审核合并；本地 `docker build && docker run -p 8004:8501` 验证，输出访问 URL
+- [x] 确认阶段：用户审阅并确认文档内容 ✅
+- [x] 第①步：建仓 `gh repo create` → https://github.com/ljx-jx/bank-marketing-predict ✅
+- [x] 第②步：开出 `feature/1-project-init` 分支 ✅
+- [x] 第③步-模块1：项目工程骨架 ✅
+- [x] **第③步-模块2**：数据加载与预处理 ✅ (29 tests, 93% coverage)
+- [x] **第③步-模块3**：数据分析页面 ✅ (37 tests, 91% coverage, AC1~AC7 全覆盖)
+- [x] **第③步-模块4**：模型训练+预测 ✅ (47 tests, 86% coverage, AUC=0.8905 ✅)
+- [x] **第③步-模块5**：在线预测页面 ✅ (54 tests, 86% coverage, AC1~AC5 覆盖)
+- [x] **第③步-模块6**：健康检查与 Docker 入口 ✅ (58 tests, 86% coverage)
+- [ ] 第④步：本地 CI 全门禁自检
+- [ ] 第⑤步：推送分支 → `gh pr create` → CI 全绿
+- [ ] 第⑥步：人工审核合并 → 本地 docker 部署验证，输出 URL
 
 ---
 
@@ -56,3 +56,9 @@
 - [x] 填写 `00-project-context.md` — 项目身份、技术栈、目录地图、质量门槛、部署取值
 - [x] 填写 `01-requirements.md` — 5 个用户故事（US-1~US-5），含验收标准
 - [x] 初始化 `PROGRESS.md` — 待办清单、ADR、里程碑
+- [x] **模块1** — 项目工程骨架：22 文件，ruff ✅，18 tests ✅，100% 覆盖率 ✅
+- [x] **模块2** — 数据加载与预处理：load_train_data/load_test_data, sklearn Pipeline (Imputer+Scaler+OneHot), 29 tests, 93% 覆盖率 ✅
+- [x] **模块3** — 数据分析页面：KPI 卡片 + 描述性统计 + 分类/数值特征可视化 + 相关性热力图 + 双变量探索, 37 tests, 91% ✅
+- [x] **模块4** — 模型训练+预测：RandomForest (AUC=0.8905), LR 回退, Pipeline 持久化, predict 模块, 47 tests, 86% ✅
+- [x] **模块5** — 在线预测页面：20 特征点选表单 + 预测结果展示 + 概率 meter, 54 tests, 86% ✅
+- [x] **模块6** — 健康检查：/healthz 端点 + Docker 入口脚本 + 双端口暴露, 58 tests, 86% ✅
