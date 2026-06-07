@@ -1,0 +1,58 @@
+# PROGRESS · bank-marketing-predict 〔本项目活记忆 · 状态机〕
+
+> **作用**：这是项目的"存档点"。任意 AI、任意重启会话，读它即可知道当前做到哪、下一步做什么、踩过什么坑。
+> **更新时机**：每完成一个有意义步骤、每次会话结束前。
+> **格式要求**：时间倒序，最新在上；短、准、可接力。
+
+---
+
+## 当前状态 (最后更新: 2026-06-07 · by AI)
+
+- **阶段**：`初始化`（对应六步流程第 ① 步：建仓前准备）
+- **上一步完成**：已填写 `00-project-context.md`、`01-requirements.md`，初始化本文件。
+- **下一步 (TODO 第一条)**：等待用户确认文档内容；确认后进入六步流程第 ① 步 — 建仓。
+- **阻塞项**：无
+
+---
+
+## 待办清单 (TODO，按优先级)
+
+- [ ] **确认阶段**：用户审阅并确认 `00-project-context.md`、`01-requirements.md`、`PROGRESS.md`
+- [ ] **第①步**：用 `gh` 创建 GitHub 仓库；初始化 `.gitignore` + 占位 `README.md`
+- [ ] **第①步**：提示用户配置 GitHub Secrets（本项目仅 CI 无 CD，可跳过 SSH Secrets，仅确认仓库可用）
+- [ ] **第②步**：从 `main` 开出 `feature/1-project-init` 分支
+- [ ] **第③步-模块1**：搭建项目骨架（`src/`、`tests/`、`requirements.txt`、`requirements-dev.txt`、`Dockerfile`、`.github/workflows/ci.yml`）
+- [ ] **第③步-模块2**：实现数据加载与预处理模块（`src/utils/data_loader.py`、`src/utils/preprocessing.py`）+ 单元测试
+- [ ] **第③步-模块3**：实现数据分析页面（US-2）+ 集成测试
+- [ ] **第③步-模块4**：实现模型离线训练模块（`src/model/train.py`）+ 单元测试，验证 AUC >= 0.70
+- [ ] **第③步-模块5**：实现在线预测页面（US-4）+ 单元测试
+- [ ] **第③步-模块6**：实现应用入口与健康检查（US-5）+ 测试
+- [ ] **第④步**：本地 CI 自检 — `ruff format --check .`、`ruff check .`、`pytest --cov --cov-fail-under=80`
+- [ ] **第⑤步**：推送 feature 分支，`gh pr create` 发起 PR，等待 CI 全绿
+- [ ] **第⑥步**：人工审核合并；本地 `docker build && docker run -p 8004:8501` 验证，输出访问 URL
+
+---
+
+## 关键决策记录 (ADR)
+
+| 日期 | 决策 | 理由 |
+|---|---|---|
+| 2026-06-07 | 技术栈选定 Python 3.11 + Streamlit + scikit-learn + Docker | 课程指定；Streamlit 是纯 Python 数据应用框架，适合快速构建数据分析与 ML 演示 |
+| 2026-06-07 | 本项目只做 CI 不做 CD | 用户明确要求"跑通 CI，不做 CD，本地部署" |
+| 2026-06-07 | 端口使用 8004（宿主机）→ 8501（容器内） | 用户指定 8004；Streamlit 默认 8501，通过 Docker 端口映射 |
+| 2026-06-07 | 模型基线 AUC 门槛设为 0.70 | 银行营销数据集为不平衡二分类问题，0.70 为合理基线 |
+| 2026-06-07 | 数据与模型产物不进 Git | 数据集约 30k 行，含 CSV；模型文件为二进制产物，均不适合版本控制 |
+
+---
+
+## 已知坑 (GOTCHAS)
+
+- （暂无 — 项目尚未开始开发，后续遇到故障在此记录）
+
+---
+
+## 里程碑 (DONE)
+
+- [x] 填写 `00-project-context.md` — 项目身份、技术栈、目录地图、质量门槛、部署取值
+- [x] 填写 `01-requirements.md` — 5 个用户故事（US-1~US-5），含验收标准
+- [x] 初始化 `PROGRESS.md` — 待办清单、ADR、里程碑
